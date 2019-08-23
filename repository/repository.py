@@ -12,6 +12,20 @@ class Repository:
         self.__categories = ["tag1", "tag2", "tag3", "tag4", "tag5", "tag6", "tag7", "tag8", "tag9", "tag10", "tag11", "tag12", "tag13", "tag14", "tag15", "tag16", "tag17", "tag18", "tag19", "tag20", "tag21", "tag22"]
         self.version = version
 
+        self.path_global = r"C:\Users\{}\Music".format(getlogin())
+        self.song_list = []
+
+    def searchFiles(self, path):
+        """Loops through directories within a given path for mp3 files."""
+        for file in listdir(path):
+            if file == "iTunes":
+                continue
+            try:
+                self.searchFiles(path+"\{}".format(file))
+            except:
+                if file.endswith(".mp3"):
+                    self.song_list.append(file)
+
     def getAllStats(self):
         """Returns the dictionary of songs and their tags."""
         return self.__stats
@@ -55,13 +69,15 @@ class Repository:
         return files
 
     def checker(self, filename):
+        """Compares the saved file with the music folder"""
         file_melodies = []
         file_names = []
         my_melodies = []
-        for file in listdir(r"C:\Users\{}\Music".format(getlogin())):
-            if file.endswith(".mp3"):
-                file, _ = file.split(".m")
-                my_melodies.append(file)
+        self.searchFiles(self.path_global)
+        for file in self.song_list:
+            file, _ = file.split(".m")
+            my_melodies.append(file)
+        self.song_list.clear()
         f = open(filename, "rb")
         lines = f.readlines()
         f.close()
